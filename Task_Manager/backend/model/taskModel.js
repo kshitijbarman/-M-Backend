@@ -8,7 +8,7 @@ const taskSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: true,
+      // required: true,
     },
     description: {
       type: String,
@@ -16,12 +16,35 @@ const taskSchema = new mongoose.Schema(
     },
     dueDate: {
       type: Date,
+      // required: true,
+    },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: true,
+    },
+    // assignedBy: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "users",
+    //   required: true,
+    // },
+    status: {
+      type: String,
+      enum: ["pending", "inProgress", "completed", "cancelled"],
+      default: "pending",
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
-      // required: true,
+    },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "low",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true, versionKey: false }

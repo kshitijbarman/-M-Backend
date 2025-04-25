@@ -46,14 +46,14 @@ const userModel = require("../model/userModel");
 
 module.exports = async (req, res, next) => {
   const barreToken = req.headers.authorization;
-  console.log(">>>>> barreToken >>>>>>>", barreToken);
+  // console.log(">>>>> barreToken >>>>>>>", barreToken);
 
   if (!barreToken) {
     return res.status(401).json({ message: "No token provided" });
   }
 
   const token = barreToken.split(" ")[1];
-  console.log(">>>>> token >>>>>>>", token);
+  // console.log(">>>>> token >>>>>>>", token);
 
   if (!token) {
     return res.status(401).json({ message: "No token found" });
@@ -61,7 +61,7 @@ module.exports = async (req, res, next) => {
 
   try {
     const decode = jwt.verify(token, secret);
-    console.log(">>>>> decode >>>>>>>", decode);
+    // console.log(">>>>> decode >>>>>>>", decode);
 
     if (!decode) {
       return res.status(401).json({ message: "Invalid token" });
@@ -69,7 +69,7 @@ module.exports = async (req, res, next) => {
 
     // Fetch user from database after decoding the token
     const user = await userModel.findOne({ email: decode.email });
-    console.log(">>>>> user >>>>>>>", user);
+    // console.log(">>>>> user >>>>>>>", user);
 
     if (!user) {
       return res.status(401).json({ message: "Invalid user" });
