@@ -1,10 +1,12 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SignUp from "./pages/auth/SignUp";
 import LogIn from "./pages/auth/Login";
 import Otp from "./pages/auth/Otp";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import User from "./pages/users/user";
+import ForgetPassword from "./pages/auth/ForgetPassword";
 
 const router = createBrowserRouter([
   {
@@ -20,12 +22,24 @@ const router = createBrowserRouter([
     element: <Otp />,
   },
   {
+    path: "/forget-pass",
+    element: <ForgetPassword />,
+  },
+  {
     path: "/dashboard",
-    element: <AdminDashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/user",
-    element: <User />,
+    element: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <User />
+      </ProtectedRoute>
+    ),
   },
 ]);
 

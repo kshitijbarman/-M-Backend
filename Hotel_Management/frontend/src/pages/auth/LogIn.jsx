@@ -20,39 +20,31 @@ const LogIn = () => {
       alert("Please fill in all the fields");
       return;
     }
-    console.log(formData);
 
-      try {
-        const res = await axios.post(
-          "http://localhost:6969/user/login",
-          formData
-        );
-        alert("Login successful!");
-        localStorage.setItem("isLogin", true);
-        localStorage.setItem("role", res.data.role);
-        localStorage.setItem("token", res.data.token);
+    try {
+      const res = await axios.post(
+        "http://localhost:6969/user/login",
+        formData
+      );
+      alert("Login successful!");
+      localStorage.setItem("isLogin", true);
+      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("token", res.data.token);
 
-        if (res.data.role === "admin") {
-          navigate("/dashboard");
-        } else {
-          navigate("/user");
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        alert(error.response?.data?.message || "Login failed");
+      if (res.data.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/user");
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(error.response?.data?.message || "Login failed");
+    }
 
     setFormData({
       email: "",
       password: "",
     });
-
-    // useEffect(() => {
-    //   const isLoggedIn = localStorage.getItem("isLogin");
-    //   if (!isLoggedIn) {
-    //     navigate("/");
-    //   }
-    // }, []);
   };
 
   return (
@@ -142,7 +134,7 @@ const LogIn = () => {
                 Remember me
               </label>
             </div>
-            <a className="text-sm underline" href="#">
+            <a className="text-sm underline" href="/forget-pass">
               Forgot password?
             </a>
           </div>

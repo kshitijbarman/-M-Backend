@@ -5,8 +5,8 @@ const userModel = require("../model/userModel");
 const { sendOtpEmail } = require("../utils/sendMail");
 // const { uploadFile } = require("../utils/helper");
 
-// const SENDER_EMAIL = process.env.email;
-// const mailKey = process.env.pass;
+const SENDER_EMAIL = process.env.email;
+const mailKey = process.env.pass;
 
 exports.createUsers = async (req, res) => {
   try {
@@ -26,10 +26,11 @@ exports.createUsers = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpTimer = moment().add(10, "minutes").toDate();
 
-    // const emailSent = await sendOtpEmail(email, otp, SENDER_EMAIL, mailKey);
-    // if (!emailSent) {
-    //   return res.status(500).json({ message: "Failed to send OTP email" });
-    // }
+    const emailSent = await sendOtpEmail(email, otp, SENDER_EMAIL, mailKey);
+    if (!emailSent) {
+      return res.status(500).json({ message: "Failed to send OTP email" });
+    }
+    console.log(">>>>emailSent>>>>", emailSent);
 
     const newUser = new userModel({
       name,
@@ -111,8 +112,16 @@ exports.resendOtp = async (req, res) => {
   await user.save();
 
   // Send Email
-  // const message = `Your new OTP is: ${newOtp}\nIt is valid for 5 minutes.`;
-  // await sendEmail(user.email, "Your New OTP Code", message);
+  const message = `Your new OTP is: ${newOtp}\nIt is valid for 5 minutes.`;
+  const otp = newOtp;
+  await sendOtpEmail(
+    user.email,
+    otp,
+    SENDER_EMAIL,
+    mailKey,
+    "Your New OTP Code",
+    message
+  );
 
   res.status(200).json({ message: "OTP resent successfully" });
 };
@@ -128,7 +137,7 @@ exports.login = async (req, res) => {
   const dbPassword = existingEmail.password;
 
   const isMatch = bcrypt.compareSync(password, dbPassword);
-  console.log(isMatch);
+
   if (!isMatch) {
     return res.status(404).json({ message: "password incorrect" });
   }
@@ -150,11 +159,27 @@ exports.login = async (req, res) => {
     }
   );
 
-  console.log(">>>>>token>>>>>>", token);
-  // res.status(200).json({ message: "login successfully", token: token });
+  // console.log(">>>>>token>>>>>>", token);
+
   res.status(200).json({
     message: "Login successfully",
     token: token,
     role: existingEmail.role,
   });
+};
+
+exports.forgetPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  const existingEmail = await userModel.findOne({ email });
+
+  if (!existingEmail) {
+    return res.status(404).json({ message: "email not exist" });
+  }
+
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+  existingEmail.password = hash;
+  await existingEmail.save();
+  return res.status(200).json({ message: "Password reset successfully" });
 };
