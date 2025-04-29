@@ -34,7 +34,7 @@ const SignUp = () => {
         "http://localhost:6969/user/signup",
         formData
       );
-      alert("Signup successful!");
+      // alert("Signup successful!");
       navigate("/verification", { state: { email: formData.email } });
     } catch (error) {
       console.error("Signup error:", error);

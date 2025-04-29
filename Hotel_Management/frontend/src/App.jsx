@@ -7,6 +7,7 @@ import Otp from "./pages/auth/Otp";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import User from "./pages/users/user";
 import ForgetPassword from "./pages/auth/ForgetPassword";
+import Edit from "./components/Edit";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
         <AdminDashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/edit",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <Edit />
       </ProtectedRoute>
     ),
   },

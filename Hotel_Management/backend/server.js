@@ -4,7 +4,7 @@ const cors = require("cors");
 // const fileUpload = require("express-fileupload");
 
 const dbConnection = require("../backend/db/dataBase");
-// const taskRoutes = require("../backend/routes/taskRoutes");
+const hotelLocationRoutes = require("../backend/routes/hotelLocationRoutes");
 const userRoutes = require("../backend/routes/userRoutes");
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", userRoutes);
-// app.use("/task", taskRoutes);
+app.use("/location", hotelLocationRoutes);
 
 dbConnection();
 
