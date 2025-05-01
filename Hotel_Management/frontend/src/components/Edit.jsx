@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import API_URL from "../utils/api";
 
 const Edit = () => {
   const location = useLocation();
@@ -8,7 +9,7 @@ const Edit = () => {
 
   const [formData, setFormData] = useState({
     state: "",
-    city: "",
+    code: "",
   });
 
   const handleChange = (e) => {
@@ -22,15 +23,22 @@ const Edit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.patch("http://localhost:6969/location/update", {
-        id,
-        state: formData.state,
-        city: formData.city,
-      });
+      const token = localStorage.getItem("token");
+      const res = await axios.patch(
+        "http://localhost:6969/state/update",
+        {
+          id,
+          state: formData.state,
+          code: formData.code,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       alert("updated successfully");
       setFormData({
         state: "",
-        city: "",
+        code: "",
       });
     } catch (error) {
       console.error("Fetch error:", error);
@@ -53,11 +61,11 @@ const Edit = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">City</label>
+          <label className="block text-sm font-medium">Code</label>
           <input
             type="text"
-            name="city"
-            value={formData.city}
+            name="code"
+            value={formData.code}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded px-3 py-2"
             required

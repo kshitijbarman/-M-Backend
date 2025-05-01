@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const ForgetPassword = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -98,4 +98,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPassword;

@@ -1,12 +1,15 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-import SignUp from "./pages/auth/SignUp";
-import LogIn from "./pages/auth/Login";
-import Otp from "./pages/auth/Otp";
+
+import SignUp from "./components/AuthComponents/SignUp";
+import LogIn from "./components/AuthComponents/LogIn";
+import Otp from "./components/AuthComponents/Otp";
+import ForgetPassword from "./components/AuthComponents/ForgetPassword";
+
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import User from "./pages/users/user";
-import ForgetPassword from "./pages/auth/ForgetPassword";
+
 import Edit from "./components/Edit";
 
 const router = createBrowserRouter([
