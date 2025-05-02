@@ -15,7 +15,7 @@ const citySchema = new mongoose.Schema(
       ref: "state",
     },
     isActive: {
-      type: String,
+      type: Boolean,
       default: true,
     },
   },

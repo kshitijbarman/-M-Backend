@@ -15,12 +15,14 @@ import {
 } from "react-icons/fa";
 import Location from "../../components/AdminComponents/Location";
 import State from "./../../components/AdminComponents/State";
+import Dashboard from "./../../components/AdminComponents/Dashboard";
 import Hotel from "../../components/AdminComponents/Hotel";
+import Room from "./../../components/AdminComponents/Room";
 import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("hotel");
+  const [activeTab, setActiveTab] = useState("state");
 
   const ComponentPlaceholder = ({ title }) => (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -32,9 +34,11 @@ const AdminDashboard = () => {
   );
 
   const getContent = () => {
+    if (activeTab === "dashboard") return <Dashboard />;
     if (activeTab === "location") return <Location />;
     if (activeTab === "state") return <State />;
-    if (activeTab === "hotel") return <Hotel />;
+    if (activeTab === "Hotel") return <Hotel />;
+    if (activeTab === "rooms") return <Room />;
     return (
       <ComponentPlaceholder
         title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
@@ -59,6 +63,10 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
+  };
+
+  const handleAdmin = () => {
+    navigate("/profile");
   };
 
   return (
@@ -137,7 +145,12 @@ const AdminDashboard = () => {
               <div className="h-10 w-10 rounded-full bg-cyan-500 text-white flex items-center justify-center font-bold">
                 A
               </div>
-              <span className="ml-2 text-gray-700 font-medium">Admin</span>
+              <span
+                onClick={handleAdmin}
+                className="ml-2 text-gray-700 font-medium"
+              >
+                Admin
+              </span>
             </div>
           </div>
         </div>

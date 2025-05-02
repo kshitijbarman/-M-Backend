@@ -38,6 +38,7 @@ const State = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLocations(res.data);
+      console.log(res.data);
     } catch (error) {
       console.error("Fetch error:", error);
     }
@@ -104,8 +105,8 @@ const State = () => {
       return sortOrder === "asc" ? field : -field;
     });
 
-  const active = filtered.filter((loc) => loc.isActive === "true");
-  const inactive = filtered.filter((loc) => loc.isActive === "false");
+  const active = filtered.filter((loc) => loc.isActive === true);
+  const inactive = filtered.filter((loc) => loc.isActive === false);
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-gradient-to-br from-white to-blue-50 space-y-8 rounded-xl shadow-2xl">

@@ -183,3 +183,10 @@ exports.forgetPassword = async (req, res) => {
   await existingEmail.save();
   return res.status(200).json({ message: "Password reset successfully" });
 };
+
+exports.info = async (req, res) => {
+  const userId = req.user.id;
+  const userData = await userModel.findById(userId);
+
+  return res.status(200).json(userData);
+};

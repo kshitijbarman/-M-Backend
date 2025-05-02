@@ -11,6 +11,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import User from "./pages/users/user";
 
 import Edit from "./components/Edit";
+import Profile from "./components/AdminComponents/Profile";
+import ShowHotels from "./components/AdminComponents/ShowHotel";
+import ShowRoom from "./components/AdminComponents/ShowRoom";
 
 const router = createBrowserRouter([
   {
@@ -38,10 +41,34 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/profile",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <Profile />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/edit",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
         <Edit />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/show-hotels",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <ShowHotels />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/show-room/:hotelId",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <ShowRoom />
       </ProtectedRoute>
     ),
   },

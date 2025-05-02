@@ -3,6 +3,7 @@ const stateModel = require("../model/stateModel");
 
 exports.addCity = async (req, res) => {
   const { city, stateId } = req.body;
+  console.log(req.body);
 
   try {
     const existingCity = await cityModel.findOne({ city, stateId });
@@ -15,7 +16,7 @@ exports.addCity = async (req, res) => {
 
     const newCity = new cityModel({ city, stateId });
     await newCity.save();
-    console.console.log(newCity);
+    console.log(newCity);
 
     return res.status(200).json({ message: "City Saved Successfully" });
   } catch (error) {

@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 
 router.post("/addState", auth, stateController.addState);
 router.get("/getAllState", auth, stateController.getAllState);
-router.patch("/update", auth, stateController.updateState);
+router.patch("/update", auth, stateController.update);
 router.patch("/inactiveState", auth, stateController.inactiveState);
 router.patch("/activeState", auth, stateController.activeState);
 router.delete("/delete/:id", auth, stateController.delete);

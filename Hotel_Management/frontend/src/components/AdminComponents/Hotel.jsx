@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 
 const Hotel = () => {
+  const navigate = useNavigate();
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [formData, setFormData] = useState({
@@ -14,8 +16,10 @@ const Hotel = () => {
     cityId: "",
     stateId: "",
     rating: 1,
+    hotelImage: "",
   });
 
+  const [imagePreview, setImagePreview] = useState(null);
   const token = localStorage.getItem("token");
 
   // Fetch all states
@@ -66,13 +70,42 @@ const Hotel = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle file input change (image upload)
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, hotelImage: file });
+      setImagePreview(URL.createObjectURL(file)); // Display image preview
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.post(`${API_URL}/hotel/addHotel`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
+      const formDataWithFile = new FormData();
+      formDataWithFile.append("name", formData.name);
+      formDataWithFile.append("address", formData.address);
+      formDataWithFile.append("phone", formData.phone);
+      formDataWithFile.append("email", formData.email);
+      formDataWithFile.append("amenities", formData.amenities);
+      formDataWithFile.append("cityId", formData.cityId);
+      formDataWithFile.append("stateId", formData.stateId);
+      formDataWithFile.append("rating", formData.rating);
+
+      // Append image file if selected
+      if (formData.hotelImage) {
+        formDataWithFile.append("image", formData.hotelImage);
+      }
+
+      await axios.post(`${API_URL}/hotel/upload`, formDataWithFile, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
+
       alert("Hotel added successfully!");
       setFormData({
         name: "",
@@ -83,166 +116,167 @@ const Hotel = () => {
         cityId: "",
         stateId: "",
         rating: 1,
+        hotelImage: "",
       });
+      setImagePreview(null); // Reset image preview
     } catch (error) {
       console.error("Error adding hotel:", error);
       alert("Error adding hotel. Please try again.");
     }
   };
 
+  const handleShowHotel = () => {
+    navigate("/show-hotels");
+  };
   return (
-    <div className="p-6 bg-gray-50 space-y-6 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-bold text-blue-800">Add Hotel</h2>
+    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold text-blue-700 mb-8 border-b pb-2">
+        🏨 Add New Hotel
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* State Selection */}
+        {/* State */}
         <div>
-          <label className="block text-md font-semibold text-gray-700">
-            State
+          <label className="block text-lg font-semibold text-gray-700 mb-1">
+            🗺️ Select State
           </label>
           <select
             name="stateId"
             value={formData.stateId}
             onChange={handleStateChange}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-4 py-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
             required
           >
             <option value="">-- Select State --</option>
-            {states.map((state) => (
-              <option key={state._id} value={state._id}>
-                {state.state}
-              </option>
-            ))}
+            {states
+              .filter((state) => state.isActive === true)
+              .map((state) => (
+                <option key={state._id} value={state._id}>
+                  {state.state}
+                </option>
+              ))}
           </select>
         </div>
 
-        {/* City Selection */}
+        {/* City */}
         <div>
-          <label className="block text-md font-semibold text-gray-700">
-            City
+          <label className="block text-lg font-semibold text-gray-700 mb-1">
+            🏙️ Select City
           </label>
           <select
             name="cityId"
             value={formData.cityId}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-4 py-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
             required
           >
             <option value="">-- Select City --</option>
             {cities.length > 0 ? (
-              cities.map((city) => (
-                <option key={city._id} value={city._id}>
-                  {city.city}
-                </option>
-              ))
+              cities
+                .filter((city) => city.isActive === true)
+                .map((city) => (
+                  <option key={city._id} value={city._id}>
+                    {city.city}
+                  </option>
+                ))
             ) : (
-              <option disabled>No cities available for this state</option>
+              <option disabled>No active cities available</option>
             )}
           </select>
         </div>
 
-        {/* Hotel Name */}
-        <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Hotel Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Hotel Name"
-            required
-          />
-        </div>
-
-        {/* Address */}
-        <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Address
-          </label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Hotel Address"
-            required
-          />
-        </div>
-
-        {/* Phone */}
-        <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Phone
-          </label>
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Hotel Phone"
-            required
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Hotel Email"
-          />
-        </div>
-
-        {/* Amenities */}
-        <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Amenities
-          </label>
-          <input
-            type="text"
-            name="amenities"
-            value={formData.amenities}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Amenities"
-          />
-        </div>
+        {/* Hotel Info Fields */}
+        {[
+          { label: "🏨 Hotel Name", name: "name", placeholder: "Hotel Name" },
+          {
+            label: "📍 Address",
+            name: "address",
+            placeholder: "Hotel Address",
+          },
+          { label: "📞 Phone", name: "phone", placeholder: "Hotel Phone" },
+          {
+            label: "📧 Email",
+            name: "email",
+            placeholder: "Hotel Email",
+            type: "email",
+          },
+          {
+            label: "🛎️ Amenities",
+            name: "amenities",
+            placeholder: "Amenities",
+          },
+        ].map(({ label, name, placeholder, type = "text" }) => (
+          <div key={name}>
+            <label className="block text-lg font-semibold text-gray-700 mb-1">
+              {label}
+            </label>
+            <input
+              type={type}
+              name={name}
+              value={formData[name]}
+              onChange={handleChange}
+              className="w-full border border-gray-300 px-4 py-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder={placeholder}
+              required={name !== "email" && name !== "amenities"}
+            />
+          </div>
+        ))}
 
         {/* Rating */}
         <div>
-          <label className="block text-md font-semibold text-gray-700">
-            Rating
+          <label className="block text-lg font-semibold text-gray-700 mb-1">
+            ⭐ Rating (1 to 5)
           </label>
           <input
             type="number"
             name="rating"
-            value={formData.rating}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
             min="1"
             max="5"
-            placeholder="Rating"
+            value={formData.rating}
+            onChange={handleChange}
+            className="w-full border border-gray-300 px-4 py-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
+
+          {/* Image Upload */}
+          <div>
+            <label className="block pt-5 text-lg font-semibold text-gray-700 mb-1">
+              🖼️ Upload Hotel Image
+            </label>
+            <input
+              type="file"
+              name="hotelImage"
+              onChange={handleImageChange}
+              accept="image/*"
+              className="w-full border border-gray-300 px-4 py-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            />
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-md"
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Add Hotel
-        </button>
+        <div className="flex justify-center gap-10 mt-6">
+          <button
+            type="submit"
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-lg px-6 py-3 rounded-full shadow-md transition duration-300"
+          >
+            ➕ Add Hotel
+          </button>
+          <button
+            type="button"
+            onClick={handleShowHotel}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-lg px-6 py-3 rounded-full shadow-md transition duration-300"
+          >
+            🏨 Show Hotels
+          </button>
+        </div>
       </form>
     </div>
   );
